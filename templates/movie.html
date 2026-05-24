@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{ movie.title }}</title>
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            background:#0f0f0f;
+            color:white;
+            font-family:'Inter',sans-serif;
+        }
+
+        .container{
+            display:flex;
+            gap:50px;
+            padding:60px;
+            max-width:1200px;
+            margin:auto;
+            align-items:flex-start;
+        }
+
+        .poster img{
+            width:320px;
+            height:480px;
+            object-fit:cover;
+            border-radius:18px;
+            box-shadow:0 15px 35px rgba(0,0,0,0.5);
+            transition:0.3s;
+        }
+
+        .poster img:hover{
+            transform:scale(1.03);
+        }
+
+        .info{
+            flex:1;
+        }
+
+        .badge{
+            display:inline-block;
+            background:#1c1c1c;
+            color:#aaa;
+            padding:7px 14px;
+            border-radius:8px;
+            font-size:13px;
+            margin-bottom:18px;
+        }
+
+        h1{
+            font-size:42px;
+            margin-bottom:10px;
+        }
+
+        .genre{
+            color:#ffcc00;
+            margin-bottom:25px;
+            font-weight:600;
+        }
+
+        .overview{
+            line-height:1.8;
+            color:#cfcfcf;
+            font-size:16px;
+        }
+
+        .buttons{
+            margin-top:35px;
+            display:flex;
+            gap:15px;
+            flex-wrap:wrap;
+        }
+
+        .btn{
+            border:none;
+            padding:14px 22px;
+            border-radius:12px;
+            cursor:pointer;
+            font-size:15px;
+            font-weight:600;
+            transition:0.3s;
+            display:flex;
+            align-items:center;
+            gap:10px;
+        }
+
+        .like-btn{
+            background:#e50914;
+            color:white;
+        }
+
+        .like-btn:hover{
+            background:#ff1e2d;
+            transform:translateY(-2px);
+        }
+
+        .watch-btn{
+            background:#222;
+            color:white;
+            border:1px solid #444;
+        }
+
+        .watch-btn:hover{
+            background:#333;
+            transform:translateY(-2px);
+        }
+
+        .floating-btn{
+            position:fixed;
+            bottom:20px;
+            right:20px;
+            width:58px;
+            height:58px;
+            background:#e50914;
+            color:white;
+            border-radius:50%;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            text-decoration:none;
+            font-size:24px;
+            box-shadow:0 10px 25px rgba(0,0,0,0.5);
+            transition:0.3s;
+        }
+
+        .floating-btn:hover{
+            transform:scale(1.1);
+        }
+
+        .tooltip{
+            position:absolute;
+            right:75px;
+            background:#000;
+            padding:10px 14px;
+            border-radius:8px;
+            white-space:nowrap;
+            font-size:14px;
+            opacity:0;
+            transition:0.3s;
+            pointer-events:none;
+        }
+
+        .floating-btn:hover .tooltip{
+            opacity:1;
+        }
+
+        .toast{
+            position:fixed;
+            top:20px;
+            right:20px;
+            background:#16a34a;
+            color:white;
+            padding:14px 20px;
+            border-radius:10px;
+            font-weight:600;
+            opacity:0;
+            transform:translateY(-20px);
+            transition:0.4s;
+            z-index:9999;
+        }
+
+        .toast.show{
+            opacity:1;
+            transform:translateY(0);
+        }
+
+        @media(max-width:768px){
+
+            .container{
+                flex-direction:column;
+                padding:30px;
+                align-items:center;
+                text-align:center;
+            }
+
+            .poster img{
+                width:260px;
+                height:380px;
+            }
+
+            h1{
+                font-size:30px;
+            }
+
+            .buttons{
+                justify-content:center;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="toast" id="toast"></div>
+
+<div class="container">
+
+    <div class="poster">
+        <img src="{{ movie.poster_url }}">
+    </div>
+
+    <div class="info">
+
+        <div class="badge">
+            Movie Details
+        </div>
+
+        <h1>{{ movie.title }}</h1>
+
+        <div class="genre">
+            {{ movie.genres }}
+        </div>
+
+        <p class="overview">
+            {{ movie.overview }}
+        </p>
+
+        <div class="buttons">
+
+            <button class="btn like-btn"
+                onclick="sendAction('like')">
+
+                <i class="fa-solid fa-heart"></i>
+                Like
+
+            </button>
+
+            <button class="btn watch-btn"
+                onclick="sendAction('watch_later')">
+
+                <i class="fa-solid fa-bookmark"></i>
+                Watch Later
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<a href="/recommend" class="floating-btn">
+
+    <i class="fas fa-film"></i>
+
+    <span class="tooltip">
+        Recommended Movies
+    </span>
+
+</a>
+
+<script>
+
+function showToast(message){
+
+    const toast = document.getElementById("toast");
+
+    toast.innerText = message;
+
+    toast.classList.add("show");
+
+    setTimeout(() => {
+
+        toast.classList.remove("show");
+
+    }, 3000);
+}
+
+function sendAction(type){
+
+    fetch("/action", {
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/x-www-form-urlencoded"
+        },
+
+        body:
+            "movie_id={{ movie['tmdb_id'] }}&type=" + type
+    })
+
+    .then(response => response.text())
+
+    .then(data => {
+
+        if(type === "like"){
+            showToast("Movie added to liked movies");
+        }
+        else{
+            showToast("Movie added to watch later");
+        }
+
+    });
+
+}
+
+</script>
+
+</body>
+</html>

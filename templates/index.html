@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>Select Movies</title>
+
+    <style>
+        body{
+            background:#141414;
+            color:white;
+            font-family:Arial;
+            margin:0;
+        }
+
+        h1{
+            padding:20px;
+            margin:0;
+        }
+
+        /* GRID FIX */
+        .container{
+            display:grid;
+            grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));
+            gap:15px;
+            padding:20px;
+            max-width:1300px;
+            margin:auto;
+        }
+
+        .card{
+            background:#222;
+            border-radius:10px;
+            overflow:hidden;
+            padding:10px;
+            text-align:center;
+            cursor:pointer;
+            transition:0.2s;
+        }
+
+        .card:hover{
+            transform:scale(1.03);
+        }
+
+        .card img{
+            width:100%;
+            height:230px;
+            object-fit:cover;
+            border-radius:8px;
+        }
+
+        a{
+            color:white;
+            text-decoration:none;
+        }
+
+        h3{
+            font-size:14px;
+            margin:8px 0 4px 0;
+        }
+
+        p{
+            font-size:12px;
+            color:#bbb;
+            margin:0;
+        }
+
+        /* Better control for big screens (5–6 columns) */
+        @media (min-width: 1200px) {
+            .container{
+                grid-template-columns:repeat(6, 1fr);
+            }
+        }
+
+        @media (min-width: 992px) and (max-width: 1199px) {
+            .container{
+                grid-template-columns:repeat(5, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container{
+                grid-template-columns:repeat(2, 1fr);
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+<h1>Select Movies You Like</h1>
+
+<div id="movieContainer" class="container"></div>
+
+<script>
+let page = 1;
+let loading = false;
+
+async function loadMovies() {
+
+    if (loading) return;
+    loading = true;
+
+    const res = await fetch(`/api/movies?page=${page}`);
+    const data = await res.json();
+
+    const container = document.getElementById("movieContainer");
+
+   data.forEach(movie => {
+    container.innerHTML += `
+        <a href="/movie/${movie.MovieID}" class="card">
+            <img src="${movie.poster_url}" />
+            <h3>${movie.title}</h3>
+            <p>${movie.genres}</p>
+        </a>
+    `;
+});
+
+    page++;
+    loading = false;
+}
+
+loadMovies();
+
+window.addEventListener("scroll", () => {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
+        loadMovies();
+    }
+});
+</script>
+ <h1 style="color:white; padding:20px;">Movie Page</h1>
+
+    <!-- Floating Button -->
+    <a href="recommend" class="floating-btn">
+        <i class="fas fa-film"></i>
+        <span class="tooltip">See recommended videos</span>
+    </a>
+
+    <style>
+        /* Floating Button */
+.floating-btn{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    width:40px;
+    height:40px;
+    background:#e50914;
+    color:white;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    font-size:22px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.4);
+    transition:0.3s;
+}
+
+/* Hover effect */
+.floating-btn:hover{
+    transform:scale(1.1);
+}
+
+/* Tooltip */
+.tooltip{
+    position:absolute;
+    right:70px;
+    background:black;
+    color:white;
+    padding:8px 12px;
+    border-radius:6px;
+    font-size:14px;
+    white-space:nowrap;
+
+    opacity:0;
+    transform:translateX(10px);
+    transition:0.3s;
+    pointer-events:none;
+}
+
+/* Show tooltip on hover */
+.floating-btn:hover .tooltip{
+    opacity:1;
+    transform:translateX(0);
+}
+        </style>
+</body>
+</html>
