@@ -3,14 +3,6 @@
 ## Project Information
 
 **Course:** Artificial Neural Network & Deep Learning  
-**Submitted To:** Dr. Saifullah  
-
-## Group Members
-
-- M. Hamza Shahzad — BAI233003  
-- Husnain Anwaar — BAI233016  
-- Hassan Arshad — BAI233037  
-
 ---
 
 # Introduction
@@ -135,6 +127,8 @@ After training, the system predicts movies for users using the following steps:
 5. Recommend top movies  
 
 Movies with the highest recommendation scores are suggested to the user.
+<img width="657" height="314" alt="Picture2" src="https://github.com/user-attachments/assets/88d83f86-8af3-4de5-bdf3-31f838ffc704" />
+<img width="627" height="259" alt="Picture3" src="https://github.com/user-attachments/assets/15bed678-8e3e-45a8-b827-1f7f1ef63bce" />
 
 ---
 
